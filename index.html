@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Growtopia Splice & Mass Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Growtopia <span>Splice</span> Calculator</h1>
+  <p class="sub">Pick any spliceable item. The calculator works through its whole splice tree down to Dirt, Rock, Lava and Cave Background seeds, and counts the seeds you get back along the way.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Goal</h2>
+      <label>Item to make (<span id="count"></span> spliceable items)</label>
+      <input id="target" list="itemList" value="Science Station" autocomplete="off" placeholder="Start typing, e.g. Chandelier"><datalist id="itemList"></datalist><div class="note" id="targetMsg" style="color:var(--warn)"></div>
+      <label>I want</label>
+      <div class="seg" id="mode">
+        <button data-m="trees" class="on">N trees spliced</button>
+        <button data-m="seeds">N seeds of it</button>
+      </div>
+      <label>N</label>
+      <input type="number" id="qty" value="100" min="1">
+    </div>
+    <div class="card">
+      <h2>Drop settings</h2>
+      <div class="row">
+        <div><label>Seed chance per broken block %</label><input type="number" id="pSeed" value="25" min="0" max="100" step="1"></div>
+        <div><label>Block back when breaking %</label><input type="number" id="pBack" value="10" min="0" max="90" step="1"></div>
+      </div>
+      <label>Safety margin % (luck buffer)</label>
+      <input type="number" id="margin" value="10" min="0" max="200" step="1">
+      <div class="chk"><input type="checkbox" id="breakBlocks" checked><span>Break the in-between blocks for extra seeds</span></div>
+      <div class="chk"><input type="checkbox" id="treeSeeds" checked><span>Count seeds dropped by trees (based on rarity)</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Seeds you need for <span id="goalName"></span></h2>
+    <div class="big" id="baseStats"></div>
+    <p class="note" id="buyNote"></p>
+  </div>
+
+  <div class="card">
+    <h2>What you get at the end</h2>
+    <div class="big" id="finalStats"></div>
+  </div>
+
+  <div class="card">
+    <h2>Splice plan, in order</h2>
+    <p class="note">Start at the top. "Trees" is how many to splice (each one uses 1 seed of each ingredient). "Seeds back" is the expected number of that item's seeds after harvesting and, if ticked, breaking the blocks.</p>
+    <div class="scroll"><table id="plan"></table></div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>Seeds in this recipe tree: inventory, "buy instead", max blocks</summary>
+      <p class="note">Put in seeds you already own; they come off the totals. Tick <b>Buy</b> for any seed you'd rather buy from a vending machine; everything below it is then left out. <b>Max blocks</b> is the "Up to X" on the wiki page (most non-farmables are 4).</p>
+      <div class="scroll"><table id="items"></table></div>
+    </details>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>Add or fix a recipe</summary>
+      <p class="note">Missing a newer item, or a recipe changed? Add it here. It's saved in this browser and overrides the built-in recipe with the same name.</p>
+      <div class="row" style="flex-wrap:wrap">
+        <div><label>Item</label><input id="cItem" list="itemList"></div>
+        <div><label>Seed A</label><input id="cA" list="itemList"></div>
+        <div><label>Seed B</label><input id="cB" list="itemList"></div>
+        <div style="max-width:110px"><label>Rarity (optional)</label><input id="cR" type="number" min="1"></div>
+        <div style="flex:0"><button id="addBtn" class="btn">Add</button></div>
+      </div>
+      <p class="note" id="cMsg"></p>
+      <div class="note" id="customList"></div>
+    </details>
+  </div>
+
+  <div class="card note">
+    <b>Where the recipes come from.</b> Around 840 splice recipes from community recipe lists that follow the Growtopia Wiki tier guides; they were checked against the wiki for the Science Station chain. Items added to the game in roughly the last few years may be missing; use "Add or fix a recipe" for those. Rarities are the in-game values where known.
+  </div>
+
+  <div class="card note">
+    <b>How the estimate works.</b> Each spliced tree drops on average 2.5 blocks for an "up to 4" tree, 3.75 for up to 8, 5 for up to 12 and 6.25 for up to 16. A tree also drops its own seed with a chance that gets lower as rarity goes up: about 1 in 3 at rarity 1–3, 1 in 4 at 4–7, 1 in 5 at 8–11, and so on, falling by one step every 4 rarity. A broken block has a flat 25% seed chance and a 10% chance to give the block back, which works out to about 1 seed per 3.6 blocks. These are community averages from the Growtopia forums and wiki, not exact game code, and real results vary with luck; that's what the safety margin is for. Harvester, Deep Sorrow, roles and other buffs aren't counted, so with buffs you'll usually need fewer seeds than shown.
+  </div>
+</div>
+
+<script src="js/recipes.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
