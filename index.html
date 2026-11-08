@@ -32,10 +32,13 @@
         <div><label>Seed chance per broken block %</label><input type="number" id="pSeed" value="25" min="0" max="100" step="1"></div>
         <div><label>Block back when breaking %</label><input type="number" id="pBack" value="10" min="0" max="90" step="1"></div>
       </div>
-      <label>Safety margin % (luck buffer)</label>
-      <input type="number" id="margin" value="10" min="0" max="200" step="1">
+      <div class="row">
+        <div><label>Safety margin % (luck buffer)</label><input type="number" id="margin" value="10" min="0" max="200" step="1"></div>
+        <div><label>Regrow rounds</label><input type="number" id="regrow" value="1" min="0" max="10" step="1"></div>
+      </div>
       <div class="chk"><input type="checkbox" id="breakBlocks" checked><span>Break the in-between blocks for extra seeds</span></div>
       <div class="chk"><input type="checkbox" id="treeSeeds" checked><span>Count seeds dropped by trees (based on rarity)</span></div>
+      <p class="note" style="margin:10px 0 0">Regrow rounds: items that give back 1.2+ seeds per tree (Grass, Bricks, Rock Background…) get replanted from their own seeds this many times instead of splicing more. 0 = splice everything.</p>
     </div>
   </div>
 
@@ -52,7 +55,7 @@
 
   <div class="card">
     <h2>Splice plan, in order</h2>
-    <p class="note">Start at the top. "Trees" is how many to splice (each one uses 1 seed of each ingredient). "Seeds back" is the expected number of that item's seeds after harvesting and, if ticked, breaking the blocks.</p>
+    <p class="note">Start at the top. "Splice" is how many trees to splice (each one uses 1 seed of each ingredient), "Regrow" how many extra trees to plant from that item's own seeds. "Seeds back" is the expected number of that item's seeds after harvesting and, if ticked, breaking the blocks.</p>
     <div class="scroll"><table id="plan"></table></div>
   </div>
 
@@ -85,7 +88,7 @@
   </div>
 
   <div class="card note">
-    <b>How the estimate works.</b> Each spliced tree drops on average 2.5 blocks for an "up to 4" tree, 3.75 for up to 8, 5 for up to 12 and 6.25 for up to 16. A tree also drops its own seed with a chance that gets lower as rarity goes up: about 1 in 3 at rarity 1–3, 1 in 4 at 4–7, 1 in 5 at 8–11, and so on, falling by one step every 4 rarity. A broken block has a flat 25% seed chance and a 10% chance to give the block back, which works out to about 1 seed per 3.6 blocks. These are community averages from the Growtopia forums and wiki, not exact game code, and real results vary with luck; that's what the safety margin is for. Harvester, Deep Sorrow, roles and other buffs aren't counted, so with buffs you'll usually need fewer seeds than shown.
+    <b>Why the numbers are big.</b> An item's rarity is the sum of the base seeds in its recipe, so one Science Station (rarity 82) is built from 82 Dirt, Rock, Lava and Cave Background seeds even if every in-between tree gave back exactly one seed. Most in-between trees give back less than one, so real totals are higher.<br><br><b>How the estimate works.</b> Max blocks per tree come from the wiki's "Up to N" counts (Grass 16; Bricks, Wooden and Rock Background 12; many blocks 8; most other items 4). Each tree drops on average 2.5 blocks for an "up to 4" tree, 3.75 for up to 8, 5 for up to 12 and 6.25 for up to 16. A tree also drops its own seed with a chance that gets lower as rarity goes up: about 1 in 3 at rarity 1–3, 1 in 4 at 4–7, 1 in 5 at 8–11, and so on, falling by one step every 4 rarity. A broken block has a flat 25% seed chance and a 10% chance to give the block back, which works out to about 1 seed per 3.6 blocks. These are community averages from the Growtopia forums and wiki, not exact game code, and real results vary with luck; that's what the safety margin is for. Harvester, Deep Sorrow, roles and other buffs aren't counted, so with buffs you'll usually need fewer seeds than shown.
   </div>
 </div>
 

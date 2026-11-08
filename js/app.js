@@ -47,11 +47,12 @@
     const target = currentTarget() || lastTarget;
     const s = {...st, target, qty:Math.max(1,+$("qty").value||1),
       pSeed:(+$("pSeed").value||0)/100, pBack:Math.min(.9,(+$("pBack").value||0)/100),
-      margin:(+$("margin").value||0)/100, breakBlocks:$("breakBlocks").checked, treeSeeds:$("treeSeeds").checked};
+      margin:(+$("margin").value||0)/100, breakBlocks:$("breakBlocks").checked, regrow:Math.max(0,+$("regrow").value||0), treeSeeds:$("treeSeeds").checked};
     const r = calculate(s);
     $("goalName").textContent = target;
     $("baseStats").innerHTML = CORE4.map(b=>`<div class="stat"><div class="n">${fmt(r.leaves[b]||0)}</div><div class="l">${b} seeds</div></div>`).join("")
-      + `<div class="stat"><div class="n">${fmt(r.totalTrees)}</div><div class="l">trees to splice in total</div></div>`;
+      + `<div class="stat"><div class="n">${fmt(r.totalTrees)}</div><div class="l">trees to splice in total</div></div>`
+      + (r.totalRegrown ? `<div class="stat"><div class="n">${fmt(r.totalRegrown)}</div><div class="l">more trees regrown from seeds</div></div>` : "");
     const other = Object.entries(r.leaves).filter(([x,n])=>n>0 && !CORE4.includes(x));
     const buys = Object.entries(r.buyList).filter(([,n])=>n>0);
     let note = "";
@@ -64,9 +65,9 @@
       <div class="stat"><div class="n">~${fmt(f.blocks)}</div><div class="l">${esc(target)} blocks (avg)</div></div>
       <div class="stat"><div class="n">~${fmt1(f.seeds)}</div><div class="l">${esc(target)} seeds from the trees</div></div>
       <div class="stat"><div class="n">~${fmt1(f.blocks*s.pSeed/(1-s.pBack))}</div><div class="l">more seeds if you break all the blocks</div></div>`;
-    $("plan").innerHTML = `<tr><th>#</th><th>Splice</th><th>Recipe</th><th class="num">Rarity</th><th class="num">Seeds needed</th><th class="num">Trees</th><th class="num">Blocks (avg)</th><th class="num">Seeds back</th></tr>` +
+    $("plan").innerHTML = `<tr><th>#</th><th>Splice</th><th>Recipe</th><th class="num">Rarity</th><th class="num">Seeds needed</th><th class="num">Splice</th><th class="num">Regrow</th><th class="num">Blocks (avg)</th><th class="num">Seeds back</th></tr>` +
       r.steps.map((x,i)=>`<tr><td class="step">${i+1}</td><td>${esc(x.item)}${x.isTarget?'<span class="tag t">goal</span>':""}</td><td>${esc(x.a)} + ${esc(x.b)}</td>
-      <td class="num">${x.rarity}</td><td class="num">${x.needed==null?"–":fmt(x.needed)}</td><td class="num">${fmt(x.trees)}</td>
+      <td class="num">${x.rarity}</td><td class="num">${x.needed==null?"–":fmt(x.needed)}</td><td class="num">${fmt(x.trees)}</td><td class="num">${x.regrown?fmt(x.regrown):"–"}</td>
       <td class="num">${fmt(x.blocks)}</td><td class="num">${fmt1(x.seedsBack)}</td></tr>`).join("");
     itemsTable(r.ord.slice().reverse());
   }
@@ -92,6 +93,6 @@
   };
   $("target").addEventListener("input", ()=>{ if (currentTarget()) run(); });
   $("target").addEventListener("change", run);
-  ["qty","pSeed","pBack","margin","breakBlocks","treeSeeds"].forEach(id=>{$(id).oninput=$(id).onchange=run;});
+  ["qty","pSeed","pBack","margin","regrow","breakBlocks","treeSeeds"].forEach(id=>{$(id).oninput=$(id).onchange=run;});
   customList(); run();
 })();
