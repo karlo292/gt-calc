@@ -7,6 +7,8 @@ const DEFAULT_MAX = {...DB.max};
 // The wiki's definition: a tree that can drop 8 or more blocks is farmable.
 function maxDrop(x){ return DEFAULT_MAX[x]||4; }
 function isFarmable(x){ return maxDrop(x)>=8; }
+// Items that share a recipe come off one tree, which drops a random one of them.
+function variants(x){ return DB.vars[x]||null; }
 
 function isLeaf(x){ return !RECIPES[x]; }
 // 0 means the item is spliceable but has no rarity on the wiki's list, so its

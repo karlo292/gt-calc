@@ -50,6 +50,13 @@ names = set(rec) | {x for r in rec.values() for x in r}
 for bad in list(DUPES) + BOGUS + list(RENAME):
     assert bad not in names, f"{bad} is still referenced as an ingredient"
 
+# Items scraped from the wiki's Splicable category that the merged lists missed.
+for line in (here / "new_items.tsv").read_text().splitlines():
+    if not line.strip() or line.startswith("#"): continue
+    item, a, b, r = line.split("\t")
+    if item in rec: continue                 # an existing entry wins
+    rec[item] = sorted([a, b]); rar[item] = int(r)
+
 # "Up to N can be dropped from harvesting its tree", from each item's wiki page.
 UP_TO = {
     16: ["Grass"],
@@ -69,6 +76,7 @@ UP_TO = {
         "Roshambo Block", "Chandelier", "Sorcerer Stone", "Pinball Bumper", "Venus Guytrap",
         "Fish Tank", "Space Connector", "Sugar Cane"],
 }
+names = set(rec) | {x for r in rec.values() for x in r}   # recomputed: new items are in now
 mx = {n: size for size, group in UP_TO.items() for n in group}
 dropped = sorted(n for n in mx if n not in names)      # items the DB doesn't have yet
 mx = {n: v for n, v in mx.items() if n in names}
@@ -80,6 +88,13 @@ added = sorted(n for n in farm if n in names and n not in mx)
 for n in added:
     mx[n] = 8
 
+# Several items share one recipe: that tree drops a random one of them, so the
+# page warns rather than pretending a given variant is what you get.
+groups = {}
+for it, r in rec.items():
+    groups.setdefault("|".join(r), []).append(it)
+db["vars"] = {it: sorted(g) for g in groups.values() if len(g) > 1 for it in g}
+
 db["rec"], db["rar"], db["max"] = rec, rar, dict(sorted(mx.items()))
 (here / "recipes.json").write_text(json.dumps(db, separators=(",", ":")))
 
@@ -87,8 +102,17 @@ js = root / "js" / "recipes.js"
 head = "\n".join(js.read_text().split("\n")[:2])
 js.write_text(f"{head}\nconst DB = {json.dumps(db, separators=(',', ':'))};\n")
 
+# sanity: no cycles, every ingredient resolves
+def cyclic(x, stack):
+    if x in stack: return True
+    return x in rec and any(cyclic(y, stack | {x}) for y in rec[x])
+cyc = [x for x in rec if cyclic(x, set())]
+assert not cyc, f"recipe cycles: {cyc}"
+leaves = sorted({x for r in rec.values() for x in r} - set(rec))
+
 print(f"{len(rec)} recipes, {len(mx)} with a max drop over 4 "
       f"({sum(1 for v in mx.values() if v >= 8)} farmable)")
+print(f"{len(leaves)} leaf seeds, {len(db['vars'])} items in a shared-recipe group")
 print(f"dropped {len(DUPES)} duplicate keys, {len(BOGUS)} non-splicable, renamed {len(RENAME)}")
 print(f"'Up to N' entries for items not in the DB (skipped): {dropped}")
 print(f"farmable per the wiki but previously treated as 'up to 4' ({len(added)}): {added}")

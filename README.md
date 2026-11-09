@@ -15,10 +15,11 @@ data/             recipes.json, farmables.txt and the scripts that build them
 ```
 
 ## Features
-- 833 splice recipes, searchable
+- 1,095 splice recipes, searchable
 - Expected seeds back per tree (rarity-based tree seed drop + seeds from breaking blocks)
 - Farmables tagged with a green **F**, and replanted from their own seeds instead of
   being spliced again, which cuts both the splicing and the starting seeds
+- Items that share a recipe are marked "1 of N": that tree drops a random one of them
 - Safety margin, seeds you already own, and "buy instead" for any seed in the tree
 - Add or fix recipes in the page (saved in your browser)
 
@@ -41,22 +42,28 @@ gives back less than the seed it cost, so replanting them shrinks away rather th
 paying for itself.
 
 ## Data
-`data/recipes.json` holds `rec` (recipes), `rar` (rarity), `leafR` and `max` (blocks per
-tree, where more than 4). It is merged from community recipe lists that follow the
-Growtopia Wiki splice guides by `data/build_db.py`, then cleaned by `data/fix_db.py`,
-which also regenerates `js/recipes.js`. `data/farmables.txt` is the wiki's
-Farmability Guide list.
+`data/recipes.json` holds `rec` (recipes), `rar` (rarity), `leafR`, `max` (blocks per
+tree, where more than 4) and `vars` (items sharing a recipe). `data/build_db.py` merges
+the community recipe lists; `data/fix_db.py` then cleans them, folds in the wiki data
+and regenerates `js/recipes.js`. Its inputs are `data/farmables.txt` (the wiki's
+Farmability Guide) and `data/new_items.tsv` ({RecipeSplice} scraped from every page in
+the wiki's Splicable category).
 
 Checked against the wiki in November 2026:
 
-- all 833 rarities match the wiki's *Items By Rarity* list
-- 34 recipes were read off their wiki pages and all 34 match
-- Egg Wallpaper and Cardboard Egg are spliceable but appear on no rarity list, so they
-  are stored as rarity 0 and their trees are counted as dropping no seed
+- all 1,095 rarities come from the wiki's *Items By Rarity* list, and every rarity that
+  was already here matched it
+- 44 recipes were read off their own wiki pages and all 44 match
+- the 262 items added from the Splicable category close the gap that used to leave
+  roughly a quarter of the game missing
+- items with **?** for a rarity appear on no rarity list, so their trees are counted as
+  dropping no seed
 
-Still missing: the wiki's Splicable category has about 1,100 items against the 833 here,
-so roughly 270 — mostly added since 2022 — are absent. Use "Add or fix a recipe" in the
-page for those.
+Known limit: 178 items share a recipe with at least one other, because one tree drops a
+random one of the set (all 13 surgical tools come off Biohazard Sign + High Tech Wall,
+all 41 superhero pieces off Rainbow Block + Gateway To Adventure). The wiki gives no
+per-variant odds, so the page warns instead of guessing a multiplier: the tree count is
+right, but which variant you get is not.
 
 ## Previewing
 `.claude/launch.json` serves the folder on port 8777; any static server works, as does

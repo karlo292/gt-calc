@@ -30,11 +30,13 @@
   // Green F: farmable, i.e. the tree can drop 8 or more blocks.
   const fTag = x => isFarmable(x) ? '<span class="tag f" title="Farmable: up to '+maxDrop(x)+' blocks per tree">F</span>' : "";
   const rarityText = x => rarity(x) || "?";
+  // One tree, several possible items: say so rather than implying you get the one you picked.
+  const vTag = x => { const v=variants(x); return v ? `<span class="tag v" title="${esc(v.join(", "))}">1 of ${v.length}</span>` : ""; };
 
   function itemsTable(ord){
     const rows = ord.map(x=>{
       const L = isLeaf(x);
-      return `<tr class="${st.buy[x]?"buy":""}"><td>${esc(x)}${fTag(x)}${custom[x]?'<span class="tag">custom</span>':""}</td><td class="num">${rarityText(x)}</td><td>${L?(CORE4.includes(x)?"break the block":"<i>not spliceable: get it another way</i>"):esc(RECIPES[x].join(" + "))}</td>
+      return `<tr class="${st.buy[x]?"buy":""}"><td>${esc(x)}${fTag(x)}${vTag(x)}${custom[x]?'<span class="tag">custom</span>':""}</td><td class="num">${rarityText(x)}</td><td>${L?(CORE4.includes(x)?"break the block":"<i>not spliceable: get it another way</i>"):esc(RECIPES[x].join(" + "))}</td>
       <td class="num">${L?"–":`<input class="sm" type="number" min="1" step="1" data-k="max" data-i="${esc(x)}" value="${st.max[x]||maxDrop(x)}">`}</td>
       <td class="num"><input class="sm" type="number" min="0" step="1" data-k="have" data-i="${esc(x)}" value="${st.have[x]||0}"></td>
       <td>${L||x===lastTarget?"":`<input type="checkbox" data-k="buy" data-i="${esc(x)}" ${st.buy[x]?"checked":""}>`}</td></tr>`;
@@ -54,6 +56,10 @@
       margin:(+$("margin").value||0)/100, breakBlocks:$("breakBlocks").checked, regrow:Math.max(0,+$("regrow").value||0), treeSeeds:$("treeSeeds").checked};
     const r = calculate(s);
     $("goalName").textContent = target;
+    const tv = variants(target);
+    $("targetVariants").innerHTML = tv
+      ? `This recipe is shared by ${tv.length} items and its tree drops a random one of them, so expect well over ${fmt(r.fin.trees)} trees before you have the ${esc(target)} you want: ${esc(tv.join(", "))}.`
+      : "";
     $("baseStats").innerHTML = CORE4.map(b=>`<div class="stat"><div class="n">${fmt(r.leaves[b]||0)}</div><div class="l">${b} seeds</div></div>`).join("")
       + `<div class="stat"><div class="n">${fmt(r.totalTrees)}</div><div class="l">trees to splice in total</div></div>`
       + (r.totalRegrown ? `<div class="stat"><div class="n">${fmt(r.totalRegrown)}</div><div class="l">more trees regrown from seeds</div></div>` : "");
@@ -70,7 +76,7 @@
       <div class="stat"><div class="n">~${fmt1(f.seeds)}</div><div class="l">${esc(target)} seeds from the trees</div></div>
       <div class="stat"><div class="n">~${fmt1(f.blocks*s.pSeed/(1-s.pBack))}</div><div class="l">more seeds if you break all the blocks</div></div>`;
     $("plan").innerHTML = `<tr><th>#</th><th>Splice</th><th>Recipe</th><th class="num">Rarity</th><th class="num">Seeds needed</th><th class="num">Splice</th><th class="num">Regrow</th><th class="num">Blocks (avg)</th><th class="num">Seeds back</th></tr>` +
-      r.steps.map((x,i)=>`<tr><td class="step">${i+1}</td><td>${esc(x.item)}${fTag(x.item)}${x.isTarget?'<span class="tag t">goal</span>':""}</td><td>${esc(x.a)} + ${esc(x.b)}</td>
+      r.steps.map((x,i)=>`<tr><td class="step">${i+1}</td><td>${esc(x.item)}${fTag(x.item)}${vTag(x.item)}${x.isTarget?'<span class="tag t">goal</span>':""}</td><td>${esc(x.a)} + ${esc(x.b)}</td>
       <td class="num">${x.rarity||"?"}</td><td class="num">${x.needed==null?"–":fmt(x.needed)}</td><td class="num">${fmt(x.trees)}</td><td class="num">${x.regrown?fmt(x.regrown):"–"}</td>
       <td class="num">${fmt(x.blocks)}</td><td class="num">${fmt1(x.seedsBack)}</td></tr>`).join("");
     itemsTable(r.ord.slice().reverse());
