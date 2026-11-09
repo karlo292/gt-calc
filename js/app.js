@@ -27,11 +27,15 @@
     return hit || null;
   }
 
+  // Green F: farmable, i.e. the tree can drop 8 or more blocks.
+  const fTag = x => isFarmable(x) ? '<span class="tag f" title="Farmable: up to '+maxDrop(x)+' blocks per tree">F</span>' : "";
+  const rarityText = x => rarity(x) || "?";
+
   function itemsTable(ord){
     const rows = ord.map(x=>{
       const L = isLeaf(x);
-      return `<tr class="${st.buy[x]?"buy":""}"><td>${esc(x)}${custom[x]?'<span class="tag">custom</span>':""}</td><td class="num">${rarity(x)}</td><td>${L?(CORE4.includes(x)?"break the block":"<i>not spliceable: get it another way</i>"):esc(RECIPES[x].join(" + "))}</td>
-      <td class="num">${L?"–":`<input class="sm" type="number" min="1" step="1" data-k="max" data-i="${esc(x)}" value="${st.max[x]||4}">`}</td>
+      return `<tr class="${st.buy[x]?"buy":""}"><td>${esc(x)}${fTag(x)}${custom[x]?'<span class="tag">custom</span>':""}</td><td class="num">${rarityText(x)}</td><td>${L?(CORE4.includes(x)?"break the block":"<i>not spliceable: get it another way</i>"):esc(RECIPES[x].join(" + "))}</td>
+      <td class="num">${L?"–":`<input class="sm" type="number" min="1" step="1" data-k="max" data-i="${esc(x)}" value="${st.max[x]||maxDrop(x)}">`}</td>
       <td class="num"><input class="sm" type="number" min="0" step="1" data-k="have" data-i="${esc(x)}" value="${st.have[x]||0}"></td>
       <td>${L||x===lastTarget?"":`<input type="checkbox" data-k="buy" data-i="${esc(x)}" ${st.buy[x]?"checked":""}>`}</td></tr>`;
     }).join("");
@@ -66,8 +70,8 @@
       <div class="stat"><div class="n">~${fmt1(f.seeds)}</div><div class="l">${esc(target)} seeds from the trees</div></div>
       <div class="stat"><div class="n">~${fmt1(f.blocks*s.pSeed/(1-s.pBack))}</div><div class="l">more seeds if you break all the blocks</div></div>`;
     $("plan").innerHTML = `<tr><th>#</th><th>Splice</th><th>Recipe</th><th class="num">Rarity</th><th class="num">Seeds needed</th><th class="num">Splice</th><th class="num">Regrow</th><th class="num">Blocks (avg)</th><th class="num">Seeds back</th></tr>` +
-      r.steps.map((x,i)=>`<tr><td class="step">${i+1}</td><td>${esc(x.item)}${x.isTarget?'<span class="tag t">goal</span>':""}</td><td>${esc(x.a)} + ${esc(x.b)}</td>
-      <td class="num">${x.rarity}</td><td class="num">${x.needed==null?"–":fmt(x.needed)}</td><td class="num">${fmt(x.trees)}</td><td class="num">${x.regrown?fmt(x.regrown):"–"}</td>
+      r.steps.map((x,i)=>`<tr><td class="step">${i+1}</td><td>${esc(x.item)}${fTag(x.item)}${x.isTarget?'<span class="tag t">goal</span>':""}</td><td>${esc(x.a)} + ${esc(x.b)}</td>
+      <td class="num">${x.rarity||"?"}</td><td class="num">${x.needed==null?"–":fmt(x.needed)}</td><td class="num">${fmt(x.trees)}</td><td class="num">${x.regrown?fmt(x.regrown):"–"}</td>
       <td class="num">${fmt(x.blocks)}</td><td class="num">${fmt1(x.seedsBack)}</td></tr>`).join("");
     itemsTable(r.ord.slice().reverse());
   }

@@ -42,6 +42,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 tr.buy td{opacity:.5}
 .tag{display:inline-block;font-family:var(--display);font-size:10px;padding:1px 6px;border:1px solid var(--line-strong);border-radius:3px;color:var(--muted);margin-left:6px;text-transform:uppercase;letter-spacing:.06em}
 .tag.t{border-color:var(--sell);color:var(--sell);font-weight:700}
+.tag.f{border-color:var(--dl);color:var(--dl);font-weight:700}
 .scroll{overflow-x:auto}
 .note{font-size:12px;color:var(--muted);font-family:var(--sans)}
 .note b{color:var(--text)}

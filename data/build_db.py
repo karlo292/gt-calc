@@ -1,3 +1,6 @@
+# Merges the community recipe lists into recipes.json.
+# Run data/fix_db.py afterwards: it applies the wiki-checked clean-up
+# (duplicate names, max blocks per tree, farmables) and regenerates js/recipes.js.
 import re, json, sys
 dl = sys.argv[1]
 def norm(s):

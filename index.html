@@ -34,11 +34,11 @@
       </div>
       <div class="row">
         <div><label>Safety margin % (luck buffer)</label><input type="number" id="margin" value="10" min="0" max="200" step="1"></div>
-        <div><label>Regrow rounds</label><input type="number" id="regrow" value="1" min="0" max="10" step="1"></div>
+        <div><label>Replant rounds (farmables)</label><input type="number" id="regrow" value="1" min="0" max="10" step="1"></div>
       </div>
       <div class="chk"><input type="checkbox" id="breakBlocks" checked><span>Break the in-between blocks for extra seeds</span></div>
       <div class="chk"><input type="checkbox" id="treeSeeds" checked><span>Count seeds dropped by trees (based on rarity)</span></div>
-      <p class="note" style="margin:10px 0 0">Regrow rounds: items that give back 1.2+ seeds per tree (Grass, Bricks, Rock Background…) get replanted from their own seeds this many times instead of splicing more. 0 = splice everything.</p>
+      <p class="note" style="margin:10px 0 0">Replant rounds: every item tagged <span class="tag f">F</span> is farmable, so its tree drops 8+ blocks and pays back more than the seed it cost. Those get replanted from their own seeds this many times instead of being spliced again, which cuts both the splicing and the Dirt, Rock, Lava and Cave Background seeds you start with. Non-farmables are always spliced. 0 = splice everything.</p>
     </div>
   </div>
 
@@ -62,7 +62,7 @@
   <div class="card">
     <details>
       <summary>Seeds in this recipe tree: inventory, "buy instead", max blocks</summary>
-      <p class="note">Put in seeds you already own; they come off the totals. Tick <b>Buy</b> for any seed you'd rather buy from a vending machine; everything below it is then left out. <b>Max blocks</b> is the "Up to X" on the wiki page (most non-farmables are 4).</p>
+      <p class="note">Put in seeds you already own; they come off the totals. Tick <b>Buy</b> for any seed you'd rather buy from a vending machine; everything below it is then left out. <b>Max blocks</b> is the "Up to X" on the wiki page; 8 or more earns the green <span class="tag f">F</span> and makes an item worth replanting, 4 means it is not farmable.</p>
       <div class="scroll"><table id="items"></table></div>
     </details>
   </div>
@@ -84,7 +84,7 @@
   </div>
 
   <div class="card note">
-    <b>Where the recipes come from.</b> Around 840 splice recipes from community recipe lists that follow the Growtopia Wiki tier guides; they were checked against the wiki for the Science Station chain. Items added to the game in roughly the last few years may be missing; use "Add or fix a recipe" for those. Rarities are the in-game values where known.
+    <b>Where the recipes come from.</b> 833 splice recipes from community recipe lists that follow the Growtopia Wiki tier guides. Every rarity has been checked against the wiki's <i>Items By Rarity</i> list and all 833 match; the two items with <b>?</b> for a rarity are spliceable but appear nowhere on that list, so their trees are counted as dropping no seed. Farmable tags and max blocks per tree come from the wiki's <i>Farmability Guide</i>. The wiki lists about 1,100 spliceable items, so roughly 270 of them &mdash; mostly ones added since 2022 &mdash; are still missing here; use "Add or fix a recipe" for those.
   </div>
 
   <div class="card note">
